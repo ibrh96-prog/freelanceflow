@@ -4,7 +4,11 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "paths": {
+      "@workspace/db": ["../../lib/db/dist/index.js"],
+      "@workspace/db/schema": ["../../lib/db/dist/schema/index.js"]
+    }
   },
   "include": ["src/**/*"]
 }
