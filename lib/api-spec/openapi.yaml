@@ -1,0 +1,736 @@
+openapi: 3.1.0
+info:
+  title: FreelanceFlow API
+  version: 1.0.0
+  description: Project and invoice tracker API for freelancers
+servers:
+  - url: http://localhost:8080
+    description: Local development
+tags:
+  - name: health
+  - name: clients
+  - name: projects
+  - name: entries
+  - name: invoices
+  - name: summary
+paths:
+  /api/healthz:
+    get:
+      tags: [health]
+      operationId: getHealthz
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /api/clients:
+    get:
+      tags: [clients]
+      operationId: listClients
+      summary: List all clients
+      responses:
+        "200":
+          description: Client list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClientWithStats"
+    post:
+      tags: [clients]
+      operationId: createClient
+      summary: Create client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClientRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+
+  /api/clients/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    patch:
+      tags: [clients]
+      operationId: updateClient
+      summary: Update client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateClientRequest"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [clients]
+      operationId: deleteClient
+      summary: Delete client
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/projects:
+    get:
+      tags: [projects]
+      operationId: listProjects
+      summary: List projects
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, paused, completed]
+        - name: clientId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Project list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectWithStats"
+    post:
+      tags: [projects]
+      operationId: createProject
+      summary: Create project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /api/projects/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    patch:
+      tags: [projects]
+      operationId: updateProject
+      summary: Update project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [projects]
+      operationId: deleteProject
+      summary: Delete project
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/projects/{id}/entries:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    get:
+      tags: [entries]
+      operationId: listProjectEntries
+      summary: List time entries for project
+      responses:
+        "200":
+          description: Time entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimeEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags: [entries]
+      operationId: createProjectEntry
+      summary: Add time entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTimeEntryRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/entries/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    patch:
+      tags: [entries]
+      operationId: updateEntry
+      summary: Update time entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTimeEntryRequest"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [entries]
+      operationId: deleteEntry
+      summary: Delete time entry
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/projects/{id}/invoices:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    get:
+      tags: [projects]
+      operationId: listProjectInvoices
+      summary: List invoices for project
+      responses:
+        "200":
+          description: Invoices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Invoice"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags: [invoices]
+      operationId: createProjectInvoice
+      summary: Create invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInvoiceRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/invoices/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IdPath"
+    get:
+      tags: [invoices]
+      operationId: getInvoice
+      summary: Get invoice with details for print
+      responses:
+        "200":
+          description: Invoice detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [invoices]
+      operationId: updateInvoice
+      summary: Update invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateInvoiceRequest"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [invoices]
+      operationId: deleteInvoice
+      summary: Delete invoice
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/invoices/next-number:
+    get:
+      tags: [invoices]
+      operationId: getNextInvoiceNumber
+      summary: Get next invoice number
+      responses:
+        "200":
+          description: Next number
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [invoiceNumber]
+                properties:
+                  invoiceNumber:
+                    type: string
+
+  /api/summary:
+    get:
+      tags: [summary]
+      operationId: getSummary
+      summary: Dashboard metrics
+      responses:
+        "200":
+          description: Summary metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SummaryResponse"
+
+components:
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          example: ok
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    Client:
+      type: object
+      required: [id, name, hourlyRate, currency, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        hourlyRate:
+          type: number
+        currency:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ClientWithStats:
+      allOf:
+        - $ref: "#/components/schemas/Client"
+        - type: object
+          required: [activeProjectCount, totalBilled]
+          properties:
+            activeProjectCount:
+              type: integer
+            totalBilled:
+              type: number
+
+    CreateClientRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        company:
+          type: string
+        hourlyRate:
+          type: number
+          default: 0
+        currency:
+          type: string
+          default: USD
+
+    UpdateClientRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        hourlyRate:
+          type: number
+        currency:
+          type: string
+
+    Project:
+      type: object
+      required: [id, clientId, name, status, billingType, createdAt]
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, paused, completed]
+        billingType:
+          type: string
+          enum: [hourly, fixed]
+        agreedAmount:
+          type: number
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    ProjectWithStats:
+      allOf:
+        - $ref: "#/components/schemas/Project"
+        - type: object
+          required: [clientName, totalHours, earnedAmount]
+          properties:
+            clientName:
+              type: string
+            totalHours:
+              type: number
+            earnedAmount:
+              type: number
+
+    CreateProjectRequest:
+      type: object
+      required: [clientId, name]
+      properties:
+        clientId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [active, paused, completed]
+        billingType:
+          type: string
+          enum: [hourly, fixed]
+        agreedAmount:
+          type: number
+          nullable: true
+
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, paused, completed]
+        billingType:
+          type: string
+          enum: [hourly, fixed]
+        agreedAmount:
+          type: number
+          nullable: true
+
+    TimeEntry:
+      type: object
+      required: [id, projectId, hours, loggedAt, createdAt]
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        description:
+          type: string
+          nullable: true
+        hours:
+          type: number
+        loggedAt:
+          type: string
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+        calculatedValue:
+          type: number
+
+    CreateTimeEntryRequest:
+      type: object
+      required: [hours]
+      properties:
+        description:
+          type: string
+        hours:
+          type: number
+        loggedAt:
+          type: string
+          format: date
+
+    UpdateTimeEntryRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          nullable: true
+        hours:
+          type: number
+        loggedAt:
+          type: string
+          format: date
+
+    Invoice:
+      type: object
+      required: [id, projectId, invoiceNumber, status, subtotal, issuedAt, createdAt]
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        invoiceNumber:
+          type: string
+        status:
+          type: string
+          enum: [draft, sent, paid]
+        subtotal:
+          type: number
+        notes:
+          type: string
+          nullable: true
+        issuedAt:
+          type: string
+          format: date
+        dueAt:
+          type: string
+          format: date
+          nullable: true
+        paidAt:
+          type: string
+          format: date
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    InvoiceDetail:
+      allOf:
+        - $ref: "#/components/schemas/Invoice"
+        - type: object
+          required: [client, project, lineItems]
+          properties:
+            client:
+              $ref: "#/components/schemas/Client"
+            project:
+              $ref: "#/components/schemas/Project"
+            lineItems:
+              type: array
+              items:
+                $ref: "#/components/schemas/InvoiceLineItem"
+
+    InvoiceLineItem:
+      type: object
+      required: [description, hours, rate, subtotal]
+      properties:
+        description:
+          type: string
+        hours:
+          type: number
+        rate:
+          type: number
+        subtotal:
+          type: number
+
+    CreateInvoiceRequest:
+      type: object
+      properties:
+        invoiceNumber:
+          type: string
+        subtotal:
+          type: number
+        notes:
+          type: string
+        issuedAt:
+          type: string
+          format: date
+        dueAt:
+          type: string
+          format: date
+        entryIds:
+          type: array
+          items:
+            type: integer
+
+    UpdateInvoiceRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, sent, paid]
+        notes:
+          type: string
+          nullable: true
+        dueAt:
+          type: string
+          format: date
+          nullable: true
+        paidAt:
+          type: string
+          format: date
+          nullable: true
+
+    SummaryResponse:
+      type: object
+      required:
+        - totalEarnedThisMonth
+        - totalOutstanding
+        - activeProjectCount
+        - totalHoursThisMonth
+        - topClientByRevenue
+        - revenueByMonth
+        - projectProfitability
+      properties:
+        totalEarnedThisMonth:
+          type: number
+        totalOutstanding:
+          type: number
+        activeProjectCount:
+          type: integer
+        totalHoursThisMonth:
+          type: number
+        topClientByRevenue:
+          type: object
+          nullable: true
+          required: [name, amount]
+          properties:
+            name:
+              type: string
+            amount:
+              type: number
+        revenueByMonth:
+          type: array
+          items:
+            type: object
+            required: [month, amount]
+            properties:
+              month:
+                type: string
+              amount:
+                type: number
+        projectProfitability:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - name
+              - client
+              - billingType
+              - earnedAmount
+              - hoursLogged
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              client:
+                type: string
+              billingType:
+                type: string
+              earnedAmount:
+                type: number
+              agreedAmount:
+                type: number
+                nullable: true
+              hoursLogged:
+                type: number

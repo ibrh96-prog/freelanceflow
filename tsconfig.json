@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./lib/db" },
+    { "path": "./artifacts/api-server" },
+    { "path": "./artifacts/freelanceflow" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "freelanceflow",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:api": "pnpm --filter @freelanceflow/api-server dev",
+    "dev:web": "pnpm --filter @freelanceflow/web dev",
+    "build": "pnpm -r build",
+    "codegen": "pnpm --filter @workspace/api-spec codegen",
+    "db:push": "pnpm --filter @workspace/db push",
+    "db:generate": "pnpm --filter @workspace/db generate",
+    "db:seed": "psql \"$DATABASE_URL\" -f scripts/seed.sql"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
