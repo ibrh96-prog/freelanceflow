@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import { clientsRouter } from "./routes/clients.js";
 import { projectsRouter } from "./routes/projects.js";
 import { entriesRouter } from "./routes/entries.js";
@@ -12,7 +11,6 @@ import { getSummary } from "./services/metrics.js";
 export function createApp() {
   const app = express();
 
-  app.use(cors({ origin: true }));
   app.use(express.json());
 
   app.get("/api/healthz", (_req, res) => {

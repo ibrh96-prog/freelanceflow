@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./schema": "./dist/schema/index.js"
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
   },
   "scripts": {
     "build": "tsc",

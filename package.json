@@ -6,6 +6,7 @@
     "dev:api": "pnpm --filter @freelanceflow/api-server dev",
     "dev:web": "pnpm --filter @freelanceflow/web dev",
     "build": "pnpm -r build",
+    "build:api": "esbuild artifacts/api-server/src/serverless.ts --bundle --platform=node --target=node20 --format=cjs --outfile=api/_bundle.cjs",
     "codegen": "pnpm --filter @workspace/api-spec codegen",
     "db:push": "pnpm --filter @workspace/db push",
     "db:generate": "pnpm --filter @workspace/db generate",
@@ -13,5 +14,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
   }
 }

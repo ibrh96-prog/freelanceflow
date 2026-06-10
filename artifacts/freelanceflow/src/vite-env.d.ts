@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_API_URL?: string;
+  // API is served same-origin via /api on Vercel; no remote API URL needed.
 }
 
 interface ImportMeta {

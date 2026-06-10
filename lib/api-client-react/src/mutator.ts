@@ -1,7 +1,12 @@
+/**
+ * The API is served from the same origin as the frontend (single Vercel
+ * project; requests to /api/* are rewritten to the serverless function). We
+ * resolve request URLs against the current page origin so calls stay relative —
+ * no remote API URL, no CORS. The localhost fallback only matters for
+ * non-browser contexts (e.g. tests).
+ */
 export const API_BASE_URL =
-  (typeof import.meta !== "undefined" &&
-    (import.meta as { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL) ||
-  (typeof window !== "undefined" ? window.location.origin : "http://localhost:8080");
+  typeof window !== "undefined" ? window.location.origin : "http://localhost:8080";
 
 export type ErrorType<Error> = Error;
 
